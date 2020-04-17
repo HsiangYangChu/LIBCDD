@@ -6,7 +6,6 @@ from skmultiflow.drift_detection.base_drift_detector import BaseDriftDetector
 
 class FWECDD(BaseDriftDetector):
 
-
     def __init__(self, min_num_instances=30, min_fw_size = 15, warning_level=2.0, _lambda=0.2, fw_rate=0.8):
         super().__init__()
         self.sample_count = None

@@ -4,48 +4,6 @@ from skmultiflow.drift_detection.base_drift_detector import BaseDriftDetector
 
 
 class HDDM_A(BaseDriftDetector):
-    """
-    Parameters
-    ----------
-    drift_confidence : float (default=0.001)
-        Confidence to the drift
-    warning_confidence : float (default=0.005)
-        Confidence to the warning
-    two_side_option : bool (default=True)
-        Option to monitor error increments and decrements (two-sided) or only increments (one-sided)
-    Notes
-    -----
-    HDDM_A (Drift Detection Method based on the Hoeffding’s inequality.) [1]_ uses
-    the average as estimator. It receives as input a stream of real values and
-    returns the estimated status of the stream: STABLE, WARNING or DRIFT.
-    Implementation based on MOA [2]_.
-    References
-    ----------
-    .. [1] Frías-Blanco I, del Campo-Ávila J, Ramos-Jimenez G, et al.
-       Online and non-parametric drift detection methods based on Hoeffding’s bounds[J].
-       IEEE Transactions on Knowledge and Data Engineering, 2014, 27(3): 810-823.
-    .. [2] Albert Bifet, Geoff Holmes, Richard Kirkby, Bernhard Pfahringer.
-       MOA: Massive Online Analysis; Journal of Machine Learning Research 11: 1601-1604, 2010.
-    Examples
-    --------
-    >>> # Imports
-    >>> import numpy as np
-    >>> from skmultiflow.drift_detection.hddm_a import HDDM_A
-    >>> hddm_a = HDDM_A()
-    >>> # Simulating a data stream as a normal distribution of 1's and 0's
-    >>> data_stream = np.random.randint(2, size=2000)
-    >>> # Changing the data concept from index 999 to 1500, simulating an
-    >>> # increase in error rate
-    >>> for i in range(999, 1500):
-    ...     data_stream[i] = 0
-    >>> # Adding stream elements to HDDM_A and verifying if drift occurred
-    >>> for i in range(2000):
-    ...     hddm_a.add_element(data_stream[i])
-    ...     if hddm_a.detected_warning_zone():
-    ...         print('Warning zone has been detected in data: ' + str(data_stream[i]) + ' - of index: ' + str(i))
-    ...     if hddm_a.detected_change():
-    ...         print('Change has been detected in data: ' + str(data_stream[i]) + ' - of index: ' + str(i))
-    """
 
     def __init__(self, drift_confidence=0.001, warning_confidence=0.005, two_side_option=True):
         super().__init__()
