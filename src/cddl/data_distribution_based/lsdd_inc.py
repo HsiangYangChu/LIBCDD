@@ -2,7 +2,7 @@ import numpy as np
 import math
 
 
-from skmultiflow.distribution_detection.base_distribution_detector import BaseDistributionDetector
+from .base_distribution_detector import BaseDistributionDetector
 
 
 class LSDDINC(BaseDistributionDetector):

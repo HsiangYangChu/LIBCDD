@@ -2,7 +2,6 @@ import numpy as np
 import math
 import time
 
-from scipy.stats import norm
 from .kdqtree import KDQTree
 from .base_distribution_detector import BaseDistributionDetector
 

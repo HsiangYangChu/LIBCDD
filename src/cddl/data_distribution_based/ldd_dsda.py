@@ -2,7 +2,7 @@ import numpy as np
 import math
 import scipy.stats as stats
 
-from skmultiflow.distribution_detection.base_distribution_detector import BaseDistributionDetector
+from .base_distribution_detector import BaseDistributionDetector
 from skmultiflow.bayes import NaiveBayes
 from skmultiflow.utils.utils import *
 from sklearn.neighbors import KDTree

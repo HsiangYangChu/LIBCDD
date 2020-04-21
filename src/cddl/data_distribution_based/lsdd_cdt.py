@@ -3,7 +3,7 @@ import math
 import time
 
 from scipy.stats import norm
-from skmultiflow.distribution_detection.base_distribution_detector import BaseDistributionDetector
+from .base_distribution_detector import BaseDistributionDetector
 
 
 class LSDDCDT(BaseDistributionDetector):
