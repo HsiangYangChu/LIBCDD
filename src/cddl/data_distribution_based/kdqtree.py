@@ -1,7 +1,4 @@
-import copy as cp
-
 from skmultiflow.core import BaseSKMObject
-from skmultiflow.lazy.distances import mixed_distance, euclidean_distance
 from skmultiflow.utils.utils import *
 
 class KDQTree(BaseSKMObject):
