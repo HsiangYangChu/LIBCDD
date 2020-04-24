@@ -63,8 +63,6 @@ class RD(BaseDistributionDetector):
             return
 
         self.rd = self.get_rd(self.window_ref, self.window_sli)
-        # print(self.alpha)
-        print(self.rd)
 
         if self.rd > self.alpha:
             self.in_concept_change = True
