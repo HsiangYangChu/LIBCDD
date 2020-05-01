@@ -84,13 +84,12 @@ class LSDDINC(BaseDistributionDetector):
         dia = 1.0 / self.m * dia
         return dia.reshape((self.centers.shape[0], 1))
 
-
     def training(self):
         self.get_sigma()
         self.get_lambda
         if self.lambd is None:
             self.lambd = 1.0
-        self.bootstrap()
+        self.bootstrapping()
         return
 
     def get_Hl_and_h(self):
@@ -164,7 +163,7 @@ class LSDDINC(BaseDistributionDetector):
         RD = h.T.dot(aux.dot(aux)).dot(h)[0][0] / (h.T.dot(aux).dot(h)[0][0]+1e-10)
         return RD * _lambda
 
-    def bootstrap(self):
+    def bootstrappig(self):
         array = np.array(self.window_train)
         sample_result_arr = []
         for i in range(self.bootstrap_num):

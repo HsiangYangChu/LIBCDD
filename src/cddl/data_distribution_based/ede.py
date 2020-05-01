@@ -20,7 +20,7 @@ class EDE(BaseDistributionDetector):
         self.w = None
         self.reset()
 
-    def sample(self):
+    def sampling(self):
         return
 
     def reset(self):
