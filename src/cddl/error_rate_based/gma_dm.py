@@ -3,7 +3,7 @@ import numpy as np
 from skmultiflow.drift_detection.base_drift_detector import BaseDriftDetector
 
 
-class GeometricMovingAverageDM(BaseDriftDetector):
+class GMADM(BaseDriftDetector):
 
     def __init__(self, min_num_instances=30, alpha=0.99, _lambda=1):
         super().__init__()
