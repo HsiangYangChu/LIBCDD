@@ -20,9 +20,7 @@ class BaseDistributionDetector(BaseSKMObject, metaclass=ABCMeta):
     def __init__(self):
         super().__init__()
         self.in_concept_change = None
-        self.in_warning_zone = None
-        self.estimation = None
-        self.delay = None
+        self.statistic = None
 
     def reset(self):
         """ reset
@@ -31,9 +29,7 @@ class BaseDistributionDetector(BaseSKMObject, metaclass=ABCMeta):
 
         """
         self.in_concept_change = False
-        self.in_warning_zone = False
-        self.estimation = 0.0
-        self.delay = 0.0
+        self.statistic = -1
 
     def detected_change(self):
         """ detected_change
@@ -48,21 +44,7 @@ class BaseDistributionDetector(BaseSKMObject, metaclass=ABCMeta):
         """
         return self.in_concept_change
 
-    def detected_warning_zone(self):
-        """ detected_warning_zone
-
-        If the change detector supports the warning zone, this function will return
-        whether it's inside the warning zone or not.
-
-        Returns
-        -------
-        bool
-            Whether the change detector is in the warning zone or not.
-
-        """
-        return self.in_warning_zone
-
-    def get_length_estimation(self):
+    def get_statistic(self):
         """ get_length_estimation
 
         Returns the length estimation.
@@ -73,7 +55,7 @@ class BaseDistributionDetector(BaseSKMObject, metaclass=ABCMeta):
             The length estimation
 
         """
-        return self.estimation
+        return self.statistic
 
     @abstractmethod
     def add_element(self, input_value):
