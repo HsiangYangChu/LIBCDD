@@ -1,8 +1,8 @@
 import numpy as np
 import time
 
-from src.cddl.data_distribution_based import RD
-from src.cddl.draw import draw_concise_diagram
+from cddl.data_distribution_based import RD
+from cddl.draw import draw_concise_diagram
 
 
 size = 80
