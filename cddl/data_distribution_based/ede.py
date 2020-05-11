@@ -1,6 +1,6 @@
 import numpy as np
 
-from cddl.data_distribution_based import BaseDistributionDetector
+from .base_distribution_detector import BaseDistributionDetector
 
 
 class EDE(BaseDistributionDetector):

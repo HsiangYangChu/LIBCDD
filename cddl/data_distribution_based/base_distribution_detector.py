@@ -21,6 +21,7 @@ class BaseDistributionDetector(BaseSKMObject, metaclass=ABCMeta):
         super().__init__()
         self.in_concept_change = None
         self.statistic = None
+        
 
     def reset(self):
         """ reset
