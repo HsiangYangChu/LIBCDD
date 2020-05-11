@@ -47,7 +47,7 @@ class CusumDM(BaseDriftDetector):
             self.reset()
 
         self.miss_prob = self.miss_prob + (prediction - self.miss_prob) / float(self.sample_count)
-        self.miss_sum = max(0, self.miss_sum + self.miss_prob - self.miss_prob - self.delta)
+        self.miss_sum = max(0, self.miss_sum + prediction - self.miss_prob - self.delta)
         self.sample_count += 1
 
         self.estimation = self.miss_prob
