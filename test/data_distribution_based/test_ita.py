@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from cddl.data_distribution_based.ita import ITA
+from libcdd.data_distribution_based.ita import ITA
 
 
 def test_ita(test_path):

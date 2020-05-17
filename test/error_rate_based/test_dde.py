@@ -1,5 +1,5 @@
 import numpy as np
-from cddl.error_rate_based.dde import DDE
+from libcdd.error_rate_based.dde import DDE
 
 
 dm = DDE()

@@ -1,6 +1,6 @@
 import numpy as np
 
-from cddl.error_rate_based.ddm import DDM
+from libcdd.error_rate_based.ddm import DDM
 
 def test_ddm():
     """
