@@ -1,489 +1,145 @@
-# ConceptDriftDetectionLib
+LibSampling
+==========
+
+##### A Library of  Sampling Methods for 2D Scatterplots
 
-### 2020年2月24日之前
+![](fig1.png)
+
+## Introduction
+
+**LibSampling** is a python-based library of sampling methods for 2D scatterplots, which includes:
+
++ random sampling
++ density biased sampling [1] 
++ blue noise sampling [2] 
++ farthest point sampling [3] 
++ non-uniform sampling [4] 
++ Z-order sampling [5] 
++ SVD based sampling [6] 
++ hashmap based sampling [7] 
++ outlier biased random sampling [8] 
++ outlier biased blue noise sampling [9] 
++ outlier biased density based sampling [9] 
++ multi-class blue noise sampling [10] 
++ multi-view Z-order sampling [5] 
++ recursive subdivision based sampling [12] 
+
+Our goal is to facilitate the use of the popular sampling methods in visualization, graphics, and data mining. **LibSampling** provides a simple python interface where users can easily apply an appropriate sampling method to their data. The characteristics of the sampling methods and the evaluation results of our study are listed as follows:
 
-#### Reading:
+![](table.png)
 
-* Lujie 2018 Learning under Concept Drift A Review
+## Requirement
 
-* Learning from Time-Changing Data with Adaptive Windowing (**ADWIN_2007**)
++ cffi==1.11.2
++ scipy==1.0.0
++ numpy==1.13.3+mkl
++ Flask==0.10.1
++ Werkzeug==0.14.1
++ matplotlib==2.1.1
++ scikit_learn==0.19.1
 
-* Learning with Drift Detection (**DDM_2004**)
+## Download LibSampling
 
-* Exponentially Weighted Moving Average Charts for Detecting Concept Drift (**ECDD_2012**)
+The current release (Version 1.0, April 2020)  of **LibSampling** can be obtained by directly cloning this repository.
 
-* Early Drift Detection Method (**EDDM_2006**)
 
-* Concept Drift Detection Based on Equal Density Estimation (**EDE_2016**)
+## Quick Start
 
-* Fuzzy Time Windowing for Gradual Concept Drift Adaptation (**FW-DDM_2017**)
+Below is the example code to call a sampling method, where n​ and m are the sizes of the input and output data (sampling result), respectively.
 
-* Learning with Local Drift Detection (**LLDD_2006**)
+```python
+from sampling.Sampler import *
+from sampling.SamplingMethods import *
+sampler = Sampler() # Initialize the Sampler object
+sampler.set_data(data, labels)
+# data: an (n*2) numpy array indicating the point coordinates
+# labels: an (n*1) numpy array indicating the class labels with intergers 0, 1, 2, ...
+# or None if you use single-class sampling methods
+sampler.set_sampling_method(RandomSampling, sampling_rate=0.5)
+indices = sampler.get_samples_idx()
+# indices: an (m*1) numpy array indicating the indices of the sampling result
+sampled_data, sampled_labels = sampler.get_samples()
+# sampled_data: an (m*2) numpy array indicating the sampled point coordinates
+# sampled_labels: an (m*2) numpy array indicating the class labels of the sampled points
+```
 
-* Detecting Concept Drift Using Statistical Testing (**STEPD_2007**)
+A more complete example of how to use **LibSampling** is provided in `example_sampling.py` :
 
-* 浙江大学版《概率论与数理统计》
+```python
+import numpy as np
+from sampling.Sampler import *
+from sampling.SamplingMethods import *
 
-* 感知机原理
+print("run Sampler.py")
+points = np.random.random((10000, 2)) # Generated data, the input data should be a numpy array with the shape (n, 2)
+categories = np.random.randint(0, 10, 10000) # Generated label, multi-class sampling method would consider the label information as an reason to select or not select an item. It would be a np.zeros(n) as default.
 
-* 朴素贝叶斯方法原理
+sampler = Sampler()
 
-* 决策树原理
+sampler.set_data(points, categories) # For single-class sampling methods like random sampling, categories is not needed to be provided
+sampling_method = RandomSampling # You can choose your desired sampling method.
+rs_args = {
+    'sampling_rate': 0.3 # You can set the sampling ratio and other specific params for different sampling methods here.
+}
 
-* 周志华《机器学习》
+sampler.set_sampling_method(sampling_method, **rs_args) # Set Random Sampling for the sampler with necessary params
+sampled_point, sampled_category = sampler.get_samples() # Get the sampling result
 
-#### Done:
+print("Random sampling result:")
+print(sampled_point, sampled_category)
 
-* ***ECDD***
+sampling_method = OutlierBiasedRandomSampling
+outlier_score = np.sum(np.abs(points - 0.5), axis=1)
+obrs_args = {
+    'sampling_rate': 0.5, # You can set the specific params for different sampling methods here, e.g., sampling rate
+    'outlier_score': outlier_score # The default outlier_score will be determined by the class purity if you do not pass your own outlier_score to outlier biased sampling methods
+}
 
-#### Nodes:
+sampler.set_sampling_method(sampling_method, **obrs_args) # Set Outlier Biased Random Sampling for the sampler with necessary params
+sampled_point, sampled_category = sampler.get_samples() # Get the sampling result
 
-* **FW-DDM**中的方法交代的不清楚，![](https://www.zhihu.com/equation?tex=u_{old}) 和 ![](https://www.zhihu.com/equation?tex=u_{new}) 方法没有讲清，而且提供的源码简直驴唇不对马嘴，差评
+print("Outlier biased random sampling result:")
+print(sampled_point, sampled_category)
 
-* ***ECDD***的方法较好，而且背后的数学理论性较强，点赞
+sampling_method = RecursiveSubdivisionBasedSampling
+rsbs_args = { # This sampling method do not need sampling rate as input
+	'canvas_width': 1600,
+	'canvas_height': 900,
+	'grid_width': 20,
+	'threshold': 0.02,
+	'occupied_space_ratio': 0.02,
+	'backtracking_depth': 4
+}
+sampler.set_sampling_method(sampling_method, **rsbs_args)
+sampled_point, sampled_category = sampler.get_samples() # Get the sampling result
 
----
+print("Recursive subdivision based sampling result:")
+print(sampled_point, sampled_category)
+```
 
-### 2020年2月24日
+## References
 
-#### Reading:
+[1] C. R. Palmer and C. Faloutsos. Density biased sampling: An improved method for data mining and clustering. In *Proceedings of the ACM SIG- MOD International Conference on Management of Data*, pages 82–92, 2000.
 
-* Detecting Concept Drift Using Statistical Testing (**STEPD_2007**)
+[2] R. L. Cook. Stochastic sampling in computer graphics. ACM Trans. Graph., 5(1):51–72, 1986.
 
-#### Done:
+[3] M. Berger, K. McDonough, and L. M. Seversky. cite2vec: Citation- driven document exploration via word embeddings. IEEE transactions on visualization and computer graphics, 23(1):691–700, 2016.
 
-* ***STEPD***
+[4] E.BertiniandG.Santucci.Bychanceisnotenough:preservingrelative density through nonuniform sampling. In Proceedings of the Eighth International Conference on Information Visualisation, pages 622–629. IEEE, 2004.
 
-#### Nodes:
+[5] R.Hu,T.Sha,O.VanKaick,O.Deussen,andH.Huang.Datasampling in multi-view and multi-class scatterplots via set cover optimization. IEEE Transactions on Visualization and Computer Graphics, 26(1):739–748,
+2020.
 
-* **STEPD_2007**中的假设检验![](https://www.zhihu.com/equation?tex=H_1)是不对的，实验结果不理想
+[6] P.Joia,F.Petronetto,andL.Nonato.Uncoveringrepresentativegroupsin multidimensional projections. Computer Graphics Forum, 34(3):281–290, 2015.
 
----
+[7] S.Cheng,W.Xu,andK.Mueller.ColorMapND:Adata-drivenapproach and tool for mapping multivariate data to color. IEEE Transactions on Visualization and Computer Graphics, 25(2):1361–1377, 2019.
 
-#### 2020年2月25日
+[8] S. Liu, J. Xiao, J. Liu, X. Wang, J. Wu, and J. Zhu. Visual diagnosis of tree boosting methods. IEEE transactions on visualization and computer graphics, 24(1):163–173, 2017.
 
-#### Reading:
+[9] S.Xiang,X.Ye,J.Xia,J.Wu,Y.Chen,andS.Liu.Interactivecorrection
+of mislabeled training data. In Proceedings of the IEEE Conference on
+Visual Analytics Science and Technology, pages 57–68, 2019.
 
-* Online and Non-Parametric Drift Detection Methods Based on Hoeffding’s Bounds (**HDDM_2014**)
+[10] L.-Y.Wei.Multi-classbluenoisesampling.*ACMTransactionsonGraph- ics*, 29(4):79, 2010.
 
-#### Done:
-
-* ***HDDM_A***
-
-* ***HDDM_W***
-
-#### Nodes:
-
-* 总算是把**FW-ECDD**给实现了，但是对文中的方法还是存疑
-
-* Reading了四页**HDDM_2014**，将github上大牛的方法copy下来了
-
----
-
-### 2020年2月27日
-
-#### Reading:
-
-* Online and Non-Parametric Drift Detection Methods Based on Hoeffding’s Bounds (**HDDM_2014**)
-
-* 霍夫丁不等式
-
-* 切比雪夫不等式
-
-* 马尔科夫不等式
-
-#### Done:
-
-* HDDM_A（自己敲了一遍，并修改了一些错误）
-
-#### Nodes:
-
-* 发现了HDDM_A中的一些与论文不一致的地方，参数和公式推导的错误
-
----
-
-### 2020年2月28日
-
-#### Reading:
-
-* Online and Non-Parametric Drift Detection Methods Based on Hoeffding’s Bounds (**HDDM_2014**)
-
-#### Done:
-
-* **HDDM_W**
-
-#### Nodes:
-
-* 首先，感觉**TKDE**(IEEE TRANSACTIONS ON KNOWLEDGE AND DATA ENGINEERING)不愧为CCF推荐A类期刊，确实水平比较高
-理论性比较强，排版也很严谨，没有发现typo
-
-* 我发现了一处不理解的地方（有可能是我没理解，也有可能是作者的失误，但是总体上对结果影响不大）
-
-![img](./images/2020_02_28.jpg)
-
-作者说上述左右两边是等价的，但是仔细推导发现还是有一些不同
-
----
-
-### 2020年2月29日
-
-#### Reading:
-
-* Online and Non-Parametric Drift Detection Methods Based on Hoeffding’s Bounds (**HDDM_2014**)
-
-* Dynamic extreme learning machine for data stream classification (**DELM_2017**)
-
-* Extreme learning machine (**ELM**)原理
-
-* **OS-ELM**原理
-
-#### Done:
-
-* ***DELM***（在网上找到份源码，但还没有统一接口）
-
-#### Nodes:
-
-* **DELM_2017**中有很多公式，这些公式大体上能看懂，深究还是有点迷，而且文章的编排方式比较乱，但是还是有不错的实际意义的
-
-* **DELM_2017**是一个专门的DM，不具有泛化能力，他是在***ELM***和***OS-ELM***的基础上发展而来的，对于特定的情况优势明显
-
----
-
-### 2020年3月1日
-
-#### Reading:
-
-* Concept drift detection via competence models (**CM_2014**)
-
-* Dynamic extreme learning machine for data stream classification (**DELM_2017**)
-
-* Concept Drift Detection Based on Equal Density Estimation (**EDE_2016**)
-
-#### Done:
-
-* ***ELM***
-
-* ***CusumDM***
-
-#### Nodes:
-
-* 在Done最后一个算法***CusumDM***之后，就算把第一大类也是主流的一类error-base方法结束了，接下来就是date-base了
-
-* 在date-base中我首先回顾了**EDE_2016**，作者在文中仅仅提供了一个开放的思想，具体的实现并没有细说，但是基本思想还是不错的，在距离
-函数方面还有很多讨论的空间
-
-* 读了四页**CM_2014**，刚好把related work看完，发现concept drift领域可以说是百花齐放，各种方法各有优点，但是主流的就那几个
-
----
-
-### 2020年3月2日
-
-#### Reading:
-
-* Concept drift detection via competence models (**CM_2014**)
-
-* RDDM: Reactive Drift Detection Method (**RDDM_2017**)
-
-#### Done:
-
-* ***RDDM***
-
-* ***GeometricMovingAverageDM***
-
-#### Nodes:
-
-* **CM_2014**这篇文章里面太多数学的东西，一时还不能完全看懂，但是里面关于集合论的一些定义、定理及其证明还是很有意思的
-
-* **RDDM_2017**这篇文章提出了一个***RDDM***方法，他是对***DDM***的一个改进，因为***DDM***不适合drift比较慢和concept数量比较大的情况，***RDDM***有针对性行的在这方面
-做了很多提高，但是它也有一个很大的弱点，那就是需要用户定义的变量太多
-
----
-
-### 2020年3月3日
-
-#### Reading:
-
-* Concept drift detection via competence models (**CM_2014**)
-
-* Permutation test（置换检验）
-
-* Kolmogorov–Smirnov test（K-S检验）
-
-#### Done:
-
-* ***Permutation test***
-
-#### Nodes:
-
-* 又看了几个小时的**CM_2014**，现在发现慢慢的可以看得懂了，并且发现自己在放松的时刻效率会比较高
-
-* 学习了并实现了***Permutation test***，以前老是被**Permutation test**卡到，今天终于知道这个什么东西了，很好用
-
-* **Kolmogorov–Smirnov test**，太深邃了没看懂，不过知道这个干什么的了
-
----
-
-### 2020年3月4日
-
-#### Reading:
-
-* Concept drift detection via competence models (**CM_2014**)
-
-* 周志华《机器学习》之聚类算法
-
-#### Done:
-
-* ***Permutation test***
-
-#### Nodes:
-
-* 今天终于把**CM_2014**给看完了，虽然有些地方还不能理解，但是大体意思还是明白的
-
----
-
-### 2020年3月5日
-
-#### Reading:
-
-* A concept drift-tolerant case-base editing technique (**CM_2016**)
-
-* 周志华《机器学习》之降维算法
-
-#### Done:
-
-
-
-#### Nodes:
-
-* 看完了**CM_2016**的主要思想，实验还没看，这篇与**CM_2014**都是来自于Jie Lu(IEEE Fellow)团队，文中提出了一个新的case-base editing approach，他分为三步：
-    
-    * 1、根据**CM_2014**提出的方法进行detection
-
-    * 2、Competence Enforcement，大致目的就是去除noise，使用的方法为NEFCS(Noise-enhanced fast context switching)，它也包含三个部分，分别为M-BBNR(Modified blame-based noise reduction)、Context switching和Update competence model
-
-    * 3、Stepwise redundancy removal，目的就是去除冗余，提高algorithm的effectiveness
-    
---- 
-
-### 2020年3月7日
-
-#### Reading:
-
-* An Information-Theoretic Approach to Detecting Changes in Multi-Dimensional Data Streams (**ITA_2006**)
-
-* KD-Tree原理
-
-* Detecting Change in Data Streams
-
-#### Done:
-
-
-
-#### Nodes:
-
-* 看完了**ITA_2006**，通过这篇文章的Reading，意识到，对与前段时间研究的error-base方法，现在的这一类方法因为无法确定数据的分布，所以无法假设数据的分布，只能采取nonparametric tests
-    
-    * Test Statistics Calculation: KL-distance
-    
-    * Statistical Bounds: BootStrap method
-    
-    * 优点：思路清晰，思路简单，可以用于高位数据，可解释，高效率
-
-* Detecting Change in Data Streams这篇文章太深邃的，没看懂，但是发现之前Reading的**CM_2014**和**CM_2016**中部分借鉴了文中的方法
-
-* KD-Tree是BST的高位拓展，一般用来实现KNN
-
-
---- 
-
-### 2020年3月10日
-
-#### Reading:
-
-* Prototype-based Learning on Concept-drifting Data Streams (**SyncStream**)
-
-* A PCA-Based Change Detection Framework for Multidimensional Data Streams (**PCA-CD**)
-
-#### Done:
-
-
-
-#### Nodes:
-
-* **SyncStream**是一篇很不错的论文，以下是大致总结
-
-    * 1、该方法讲gradual drift和abrupt drift分开处理，前者使用clustering以缓慢适应、后者使用PCA（计算vector夹角）或者Statistical Test（Wilcoxon）
-    
-    * 2、提出了一个叫做P-Tree的数据结构，该数据结构分两层，第一层存储代表代表当前concept的prototypes、第二层是历史concepts
-    
-    * 3、采用最近邻学习法，保留原始结构，定期更新原形，显示P-Tree空间
-
---- 
-
-### 2020年3月10日
-
-#### Reading:
-
-* A PCA-Based Change Detection Framework for Multidimensional Data Streams (**PCA-CD**)
-
-* A pdf-Free Change Detection Test Based on Density Difference Estimation (**LSDD-CDT**)
-
-#### Done:
-
-* ***SyncStream***(Java)
-
-#### Nodes:
-
-* **PCA-CD**是一篇很不错的论文，以下是大致总结
-
-    * Estimating Density Functions: 在数据维度比较的时候使用Histograms，低维使用KDE-Track（精度和复杂度的权衡）
-    
-    * Divergence Metrics: MKL、A and LLH
-    
-    * Hypothesis Test: Page-Hinley
-    
-    * 每隔step时间进行一下测试
-    
-    * Windows: Reference Window & Current Window (sliding)
-    
-    * PCA
-    
-    * Dynamic Threshold Settings
-   
---- 
-
-### 2020年3月12日
-
-#### Reading:
-
-* A pdf-Free Change Detection Test Based on Density Difference Estimation (**LSDD-CDT**)
-
-* Reservoir Sampling Mechanism
-
-* BootStrap Method
-
-* An Incremental Change Detection Test Based on Density Difference Estimation (**LSDD-INC**)
-
-#### Done:
-
-* ***PCA-CD***(C++)
-
-#### Nodes:
-
-* Summary of **LSDD-CDT**
-
-    * BootStrap Method
-    
-    * Using Reservoir Sampling for reference window when it is not in the warning condition or has a false alarm
-    
-    * Three-level Threshold Mechanism: To be more sensitive to changes(i.e. keep low FNs), yet remaining the same FP rate
-    
-    * Drawbacks: High computational complexity(O(n^2)) and not feasible in datastreams
-    
---- 
-
-### 2020年3月12日~15日
-
-#### Reading:
-
-* An Incremental Change Detection Test Based on Density Difference Estimation (**LSDD-INC**)
-
-* Regional Concept Drift Detection and Density Synchronized Drift Adaptation (**LDD-DSDA**)
-
-#### Done:
-
-* ***LDD-DSDA***(matlab)
-
-#### Nodes:
-
----
-
-### 2020年3月15日~21日
-
-#### Reading:
-
-* Concept Drift Detection for Streaming Data (**LRF_2015**)
-
-* Just-in-Time Adaptive Classifiers—Part I: Detecting Nonstationary Changes (**JIT1_2007**)
-
-* Hierarchical Change-Detection Tests (**HCDTs_2016**)
-
-* A Lightweight Concept Drift Detection Ensemble (**DDE_2015**)
-
-#### Done:
-
-* ***DDE***
-
-#### Nodes:
-
-* Summary of **LRF_2015**
-
-    * It's a parallel multiple hypothesis test, which has four statistics, namely, tpr, tnr, ppv, npv
-    
-    * It's computational complexity is O(1), whereas offline computations(e.g. BoundTable) need to be done
-
-* Summary of **JIT1_2007**
-
-    * extended CUSUM & CI-CUSUM(PCA)
-    
-    * Provide 4 configurations
-    
-* Summary of **HCDTs_2016**
-
-    * A Hierarchical Structure was provided, which has two layers, namely, Detection Layer and Validation Layer
-
-* Summary of **DDE_2015**
-
-    * A Parallel Structure was provided, a combination of three detections, e.g., {HDDMA, HDDMW, DDM} 
-    
---- 
-
-### 2020年3月22日
-
-#### Reading:
-
-* Reacting to Different Types of Concept Drift: The Accuracy Updated Ensemble Algorithm (**AUE2_2013**)
-
-* Friedman test & Bonferroni-Dunn test
-
-#### Done:
-
-* ***DDE***
-
-#### Nodes:
-
-* Summary of **AUE2_2013**
-
-    * Reacting equally well to different types of drift
-    
-    * The proposed algorithm was also optimized for memory usage by restricting ensemble size and incorporating a simple inner-component pruning mechanism
-    
-    * Additional contributions of AUE2 include the proposal of a new component weighting function and a cost-effective candidate weight
-    
---- 
-
-### 2020年3月23日~31日
-
-#### Reading:
-
-* Leveraging Bagging for Evolving Data Streams (**leveraging_bagging**)
-
-* Adaptive random forests for evolving data stream classification
-
-* Fast and Light Boosting for Adaptive Mining of Data Streams
-
-* A Selective Detector Ensemble for Concept Drift Detection
-
-* Three-layer concept drifting detection in text data streams
-
-* Paired Learners for Concept Drift (**Paired_Learning**)
-
-#### Done:
-
-* ***Paired_Learners***
-
-* ***leveraging_bagging*** (rectified)
-
-#### Nodes:
-
-* Summary of **Paired_Learning**
+[11] X. Chen, T. Ge, J. Zhang, B. Chen, C. Fu, O. Deussen, and Y. Wang. A recursive subdivision technique for sampling multi-class scatterplots. IEEE Transactions on Visualization and Computer Graphics, 26(1):729– 738, 2020.
