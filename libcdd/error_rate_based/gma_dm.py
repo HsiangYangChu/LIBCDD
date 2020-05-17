@@ -3,15 +3,15 @@ import numpy as np
 from skmultiflow.drift_detection.base_drift_detector import BaseDriftDetector
 
 
-class CusumDM(BaseDriftDetector):
+class GMADM(BaseDriftDetector):
 
-    def __init__(self, min_num_instances=30, delta=0.005, _lambda=50):
+    def __init__(self, min_num_instances=30, alpha=0.99, _lambda=1):
         super().__init__()
         self.sample_count = None
         self.miss_prob = None
         self.miss_sum = None
         self.min_instances = min_num_instances
-        self.delta = delta
+        self.alpha = alpha
         self._lambda = _lambda
         self.reset()
 
@@ -47,7 +47,7 @@ class CusumDM(BaseDriftDetector):
             self.reset()
 
         self.miss_prob = self.miss_prob + (prediction - self.miss_prob) / float(self.sample_count)
-        self.miss_sum = max(0, self.miss_sum + self.miss_prob - self.miss_prob - self.delta)
+        self.miss_sum = self.alpha * sum + (1.0 - self.alpha) * (prediction - self.miss_prob)
         self.sample_count += 1
 
         self.estimation = self.miss_prob

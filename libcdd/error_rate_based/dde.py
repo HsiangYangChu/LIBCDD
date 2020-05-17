@@ -1,6 +1,6 @@
 from skmultiflow.drift_detection.base_drift_detector import BaseDriftDetector
 
-import skmultiflow.drift_detection
+from libcdd.error_rate_based import *
 
 class DDE(BaseDriftDetector):
 

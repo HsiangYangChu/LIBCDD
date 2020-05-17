@@ -110,7 +110,7 @@ class LSDDCDT(BaseDistributionDetector):
         self.get_lambda()
         if self.lambd is None:
             self.lambd = 1.0
-        self.bootstrap()
+        self.bootstrapping()
         print("Ts: " + str(self.t_s))
         print("Tw: " + str(self.t_w))
         print("Tc: " + str(self.t_c))
@@ -171,7 +171,7 @@ class LSDDCDT(BaseDistributionDetector):
                 sum += self.get_distance(xi, xj)
         self.sigma = sum / pow(self.n_t, 2)
 
-    def bootstrap(self):
+    def bootstrapping(self):
         array = np.array(self.window_train)
         sample_result_arr = []
         for i in range(self.m):
