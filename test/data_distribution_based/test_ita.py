@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from libcdd.data_distribution_based.ita import ITA
+from libcdd.data_distribution_based import *
 
 
 def test_ita(test_path):
@@ -10,7 +10,7 @@ def test_ita(test_path):
     From index 999 to 1999 the sequence is a normal distribution of integers from 0 to 7.
 
     """
-    ita = ITA()
+    ita = RD()
     test_file = os.path.join(test_path, 'drift_stream.npy')
     data_stream = np.load(test_file)
     expected_indices = [1023, 1055, 1087, 1151]
