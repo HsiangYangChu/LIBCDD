@@ -41,7 +41,7 @@ Our goal is to facilitate the use of the popular concept drift detection methods
 + scikit_learn==0.19.1
 + scikit_multiflow==0.4.1
 
-## Download LibSampling
+## Download LIBCDD
 
 The current release (Version 1.0, May 2020)  of **LIBCDD** can be obtained by directly cloning this repository.
 
@@ -54,7 +54,7 @@ Below is the example code to call a concept drift detection method.
 import numpy as np
 from libcdd.error_rate_based import *
 #新建一个检测器
-detector = HDDM_A()
+detector = DDM()
 #获取2000个数据，其中前后1000个数据分别服从不同的正态分布
 #以0为决策边界
 np.random.seed(1)
