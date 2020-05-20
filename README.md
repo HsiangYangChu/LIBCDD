@@ -1,145 +1,128 @@
-LibSampling
+LIBCDD
 ==========
 
-##### A Library of  Sampling Methods for 2D Scatterplots
+##### A Library of Concept Drift Detection Method
 
-![](fig1.png)
+![](structure.png)
 
 ## Introduction
 
-**LibSampling** is a python-based library of sampling methods for 2D scatterplots, which includes:
+**LIBCDD** is a python-based library of Concept Drift Detection Method, which includes:
 
-+ random sampling
-+ density biased sampling [1] 
-+ blue noise sampling [2] 
-+ farthest point sampling [3] 
-+ non-uniform sampling [4] 
-+ Z-order sampling [5] 
-+ SVD based sampling [6] 
-+ hashmap based sampling [7] 
-+ outlier biased random sampling [8] 
-+ outlier biased blue noise sampling [9] 
-+ outlier biased density based sampling [9] 
-+ multi-class blue noise sampling [10] 
-+ multi-view Z-order sampling [5] 
-+ recursive subdivision based sampling [12] 
++ Drift Detection Method (DDM)[10]
++ Early Drift Detection Method (EDDM)[11]
++ EWMA for Concept Drift Detection (ECDD)[12]
++ Fuzzy Windowing Drift Detection Method (FW-DDM)[13]
++ Heoffding’s inequality based Drift Detection Method A Test (HDDM_A)[14]
++ Heoffding’s inequality based Drift Detection Method W Test (HDDM_W)[14]
++ Reactive Drift Detection Method (RDDM)[15]
++ Page-Hinkley[16]
++ CUSUM[16]
++ Statistical Test of Equal Proportions Detection (STEPD)[17]
++ ADaptive WINdowing (ADWIN)[18]
++ Drift Detection Ensemble (DDE)[19]
++ Relativized Discrepancy (RD)[2]
++ Information-Theoretic Approach (ITA)[22]
++ Least Squares Density Difference-based Change Detection Test (LSDD-CDT)[23]
++ LSDD-INC[24]
++ Local Drift Degree-based Density Synchronized Drift Adaptation(LDD-DSDA)[25]
 
-Our goal is to facilitate the use of the popular sampling methods in visualization, graphics, and data mining. **LibSampling** provides a simple python interface where users can easily apply an appropriate sampling method to their data. The characteristics of the sampling methods and the evaluation results of our study are listed as follows:
+Our goal is to facilitate the use of the popular concept drift detection methods. **LIBCDD** provides a simple python interface where users can easily apply an appropriate concept drift detection method to their data. The taxonomy of these methods and characteristics of the concept drift detection methods are listed as follows:
+
+![](taxonomy.png)
 
 ![](table.png)
 
 ## Requirement
 
-+ cffi==1.11.2
 + scipy==1.0.0
 + numpy==1.13.3+mkl
-+ Flask==0.10.1
-+ Werkzeug==0.14.1
 + matplotlib==2.1.1
 + scikit_learn==0.19.1
++ scikit_multiflow==0.4.1
 
 ## Download LibSampling
 
-The current release (Version 1.0, April 2020)  of **LibSampling** can be obtained by directly cloning this repository.
+The current release (Version 1.0, May 2020)  of **LIBCDD** can be obtained by directly cloning this repository.
 
 
 ## Quick Start
 
-Below is the example code to call a sampling method, where n​ and m are the sizes of the input and output data (sampling result), respectively.
-
-```python
-from sampling.Sampler import *
-from sampling.SamplingMethods import *
-sampler = Sampler() # Initialize the Sampler object
-sampler.set_data(data, labels)
-# data: an (n*2) numpy array indicating the point coordinates
-# labels: an (n*1) numpy array indicating the class labels with intergers 0, 1, 2, ...
-# or None if you use single-class sampling methods
-sampler.set_sampling_method(RandomSampling, sampling_rate=0.5)
-indices = sampler.get_samples_idx()
-# indices: an (m*1) numpy array indicating the indices of the sampling result
-sampled_data, sampled_labels = sampler.get_samples()
-# sampled_data: an (m*2) numpy array indicating the sampled point coordinates
-# sampled_labels: an (m*2) numpy array indicating the class labels of the sampled points
-```
-
-A more complete example of how to use **LibSampling** is provided in `example_sampling.py` :
+Below is the example code to call a concept drift detection method.
 
 ```python
 import numpy as np
-from sampling.Sampler import *
-from sampling.SamplingMethods import *
-
-print("run Sampler.py")
-points = np.random.random((10000, 2)) # Generated data, the input data should be a numpy array with the shape (n, 2)
-categories = np.random.randint(0, 10, 10000) # Generated label, multi-class sampling method would consider the label information as an reason to select or not select an item. It would be a np.zeros(n) as default.
-
-sampler = Sampler()
-
-sampler.set_data(points, categories) # For single-class sampling methods like random sampling, categories is not needed to be provided
-sampling_method = RandomSampling # You can choose your desired sampling method.
-rs_args = {
-    'sampling_rate': 0.3 # You can set the sampling ratio and other specific params for different sampling methods here.
-}
-
-sampler.set_sampling_method(sampling_method, **rs_args) # Set Random Sampling for the sampler with necessary params
-sampled_point, sampled_category = sampler.get_samples() # Get the sampling result
-
-print("Random sampling result:")
-print(sampled_point, sampled_category)
-
-sampling_method = OutlierBiasedRandomSampling
-outlier_score = np.sum(np.abs(points - 0.5), axis=1)
-obrs_args = {
-    'sampling_rate': 0.5, # You can set the specific params for different sampling methods here, e.g., sampling rate
-    'outlier_score': outlier_score # The default outlier_score will be determined by the class purity if you do not pass your own outlier_score to outlier biased sampling methods
-}
-
-sampler.set_sampling_method(sampling_method, **obrs_args) # Set Outlier Biased Random Sampling for the sampler with necessary params
-sampled_point, sampled_category = sampler.get_samples() # Get the sampling result
-
-print("Outlier biased random sampling result:")
-print(sampled_point, sampled_category)
-
-sampling_method = RecursiveSubdivisionBasedSampling
-rsbs_args = { # This sampling method do not need sampling rate as input
-	'canvas_width': 1600,
-	'canvas_height': 900,
-	'grid_width': 20,
-	'threshold': 0.02,
-	'occupied_space_ratio': 0.02,
-	'backtracking_depth': 4
-}
-sampler.set_sampling_method(sampling_method, **rsbs_args)
-sampled_point, sampled_category = sampler.get_samples() # Get the sampling result
-
-print("Recursive subdivision based sampling result:")
-print(sampled_point, sampled_category)
+from libcdd.error_rate_based import *
+#新建一个检测器
+detector = HDDM_A()
+#获取2000个数据，其中前后1000个数据分别服从不同的正态分布
+#以0为决策边界
+np.random.seed(1)
+mu, std = 0, 0.1      # 均值和标准差
+data1 = np.random.normal(mu, std, 1000) > 0
+data1 = data1.astype(int)
+mu, std = 0.5, 0.1
+data2 = np.random.normal(mu, std, 1000) > 0
+data2 = data2.astype(int)
+data_stream = np.concatenate((data1, data2))
+#检测过程
+detected_indices = []
+for i in range(data_stream.size):
+    detector.add_element(data_stream[i])
+    if detector.detected_change():
+        print(str(i)+"时刻发生了概念漂移")
+#程序的运行结果为：1049时刻发生了概念漂移
 ```
 
 ## References
 
-[1] C. R. Palmer and C. Faloutsos. Density biased sampling: An improved method for data mining and clustering. In *Proceedings of the ACM SIG- MOD International Conference on Management of Data*, pages 82–92, 2000.
+[1]G. Widmer, M. Kubat. Learning in the presence of concept drift and hidden contexts[J]. Machine learning, 1996, 23(1): 69-101.
 
-[2] R. L. Cook. Stochastic sampling in computer graphics. ACM Trans. Graph., 5(1):51–72, 1986.
+[2]D. Kifer, S. Ben-David, J. Gehrke. Detecting change in data streams[A]. In: Proceedings of the VLDB[C], 2004, pp. 180-191.
 
-[3] M. Berger, K. McDonough, and L. M. Seversky. cite2vec: Citation- driven document exploration via word embeddings. IEEE transactions on visualization and computer graphics, 23(1):691–700, 2016.
+[3]G. Hulten, L. Spencer, P. Domingos. Mining time-changing data streams[A]. In: Proceedings of the seventh ACM SIGKDD international conference on Knowledge discovery and data mining[C], 2001, pp. 97-106.
 
-[4] E.BertiniandG.Santucci.Bychanceisnotenough:preservingrelative density through nonuniform sampling. In Proceedings of the Eighth International Conference on Information Visualisation, pages 622–629. IEEE, 2004.
+[4]J.C. Schlimmer, R.H. Granger. Incremental learning from noisy data[J]. Machine learning, 1986, 1(3): 317-354.
 
-[5] R.Hu,T.Sha,O.VanKaick,O.Deussen,andH.Huang.Datasampling in multi-view and multi-class scatterplots via set cover optimization. IEEE Transactions on Visualization and Computer Graphics, 26(1):739–748,
-2020.
+[5]J. Lu, A. Liu, F. Dong, et al. Learning under concept drift: A review[J]. IEEE Transactions on Knowledge Data Engineering, 2018, 31(12): 2346-2363.
 
-[6] P.Joia,F.Petronetto,andL.Nonato.Uncoveringrepresentativegroupsin multidimensional projections. Computer Graphics Forum, 34(3):281–290, 2015.
+[6]J. Gama, I. Žliobaitė, A. Bifet, et al. A survey on concept drift adaptation[J]. ACM computing surveys, 2014, 46(4): 1-37.
 
-[7] S.Cheng,W.Xu,andK.Mueller.ColorMapND:Adata-drivenapproach and tool for mapping multivariate data to color. IEEE Transactions on Visualization and Computer Graphics, 25(2):1361–1377, 2019.
+[7]M. Basseville, I.V. Nikiforov, Detection of abrupt changes: theory and application (1st Edition)[M], prentice Hall Englewood Cliffs, 1993.
 
-[8] S. Liu, J. Xiao, J. Liu, X. Wang, J. Wu, and J. Zhu. Visual diagnosis of tree boosting methods. IEEE transactions on visualization and computer graphics, 24(1):163–173, 2017.
+[8]A. Bifet, G. Holmes, R. Kirkby, et al. Moa: Massive online analysis[J]. Journal of Machine Learning Research, 2010, 11(May): 1601-1604.
 
-[9] S.Xiang,X.Ye,J.Xia,J.Wu,Y.Chen,andS.Liu.Interactivecorrection
-of mislabeled training data. In Proceedings of the IEEE Conference on
-Visual Analytics Science and Technology, pages 57–68, 2019.
+[9]J. Montiel, J. Read, A. Bifet, et al. Scikit-multiflow: A multi-output streaming framework[J]. 2018, 19(1): 2915-2914.
 
-[10] L.-Y.Wei.Multi-classbluenoisesampling.*ACMTransactionsonGraph- ics*, 29(4):79, 2010.
+[10]J. Gama, P. Medas, G. Castillo, et al. Learning with drift detection[A]. In: Proceedings of the Brazilian symposium on artificial intelligence[C], 2004, pp. 286-295.
 
-[11] X. Chen, T. Ge, J. Zhang, B. Chen, C. Fu, O. Deussen, and Y. Wang. A recursive subdivision technique for sampling multi-class scatterplots. IEEE Transactions on Visualization and Computer Graphics, 26(1):729– 738, 2020.
+[11]M. Baena-Garcıa, J. del Campo-Ávila, R. Fidalgo, et al. Early drift detection method[A]. In: Proceedings of the Fourth international workshop on knowledge discovery from data streams[C], 2006, pp. 77-86.
+
+[12]G.J. Ross, N.M. Adams, D.K. Tasoulis, et al. Exponentially weighted moving average charts for detecting concept drift[J]. Pattern recognition letters, 2012, 33(2): 191-198.
+
+[13]A. Liu, G. Zhang, J. Lu. Fuzzy time windowing for gradual concept drift adaptation[A]. In: Proceedings of the 2017 IEEE International Conference on Fuzzy Systems (FUZZ-IEEE)[C], 2017, pp. 1-6.
+
+[14]I. Frías-Blanco, J. del Campo-Ávila, G. Ramos-Jimenez, et al. Online and non-parametric drift detection methods based on Hoeffding’s bounds[J]. IEEE Transactions on Knowledge Data Engineering, 2014, 27(3): 810-823.
+
+[15]R.S. Barros, D.R. Cabral, P.M. Gonçalves Jr, et al. RDDM: Reactive drift detection method[J]. Expert Systems with Applications, 2017, 90(344-355.
+
+[16]E.S. Page. Continuous inspection schemes[J]. Biometrika, 1954, 41(1/2): 100-115.
+
+[17]K. Nishida, K. Yamauchi. Detecting concept drift using statistical testing[A]. In: Proceedings of the International conference on discovery science[C], 2007, pp. 264-269.
+
+[18]A. Bifet, R. Gavalda. Learning from time-changing data with adaptive windowing[A]. In: Proceedings of the 2007 SIAM international conference on data mining[C], 2007, pp. 443-448.
+
+[19]B.I.F. Maciel, S.G.T.C. Santos, R.S.M. Barros. A lightweight concept drift detection ensemble[A]. In: Proceedings of the 2015 IEEE 27th International Conference on Tools with Artificial Intelligence (ICTAI)[C], 2015, pp. 1061-1068.
+
+[20]T. Hagerup, C. Rüb. A guided tour of Chernoff bounds[J]. Information processing letters, 1990, 33(6): 305-308.
+
+[21]V.N. Vapnik. An overview of statistical learning theory[J]. IEEE transactions on neural networks, 1999, 10(5): 988-999.
+
+[22]T. Dasu, S. Krishnan, S. Venkatasubramanian, et al. An information-theoretic approach to detecting changes in multi-dimensional data streams[A]. In: Proceedings of the In Proc. Symp. on the Interface of Statistics, Computing Science, and Applications[C], 2006, pp. 1-24.
+
+[23]L. Bu, C. Alippi, D. Zhao. A pdf-free change detection test based on density difference estimation[J]. IEEE transactions on neural networks learning systems, 2016, 29(2): 324-334.
+
+[24]L. Bu, D. Zhao, C. Alippi. An incremental change detection test based on density difference estimation[J]. IEEE Transactions on Systems, Man, Cybernetics: Systems, 2017, 47(10): 2714-2726.
+
+[25]A. Liu, Y. Song, G. Zhang, et al. Regional concept drift detection and density synchronized drift adaptation[A]. In: Proceedings of the IJCAI International Joint Conference on Artificial Intelligence[C], 2017, pp. 2280–2286.
+

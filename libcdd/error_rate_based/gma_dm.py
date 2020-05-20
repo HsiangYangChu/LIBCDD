@@ -47,7 +47,7 @@ class GMADM(BaseDriftDetector):
             self.reset()
 
         self.miss_prob = self.miss_prob + (prediction - self.miss_prob) / float(self.sample_count)
-        self.miss_sum = self.alpha * sum + (1.0 - self.alpha) * (prediction - self.miss_prob)
+        self.miss_sum = self.alpha * self.miss_sum + (1.0 - self.alpha) * (prediction - self.miss_prob)
         self.sample_count += 1
 
         self.estimation = self.miss_prob

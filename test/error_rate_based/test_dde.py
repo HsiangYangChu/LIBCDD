@@ -1,8 +1,8 @@
 import numpy as np
-from libcdd.error_rate_based.dde import DDE
+from libcdd.error_rate_based import *
 
 
-dm = DDE()
+dm = GMADM()
 
 data_stream = np.random.randint(2, size=2000)
 

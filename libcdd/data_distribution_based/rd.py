@@ -7,7 +7,7 @@ from .base_distribution_detector import BaseDistributionDetector
 
 class RD(BaseDistributionDetector):
 
-    def __init__(self, window_size=200, n=5000, p=0.99, type="rd1", sample_size=800):
+    def __init__(self, window_size=20, n=400, p=0.99, type="rd1", sample_size=500):
         super().__init__()
         self.window_size = window_size
         self.window_ref = [None for _ in range(self.window_size)]
